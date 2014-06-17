@@ -100,11 +100,7 @@ void SymbolDistribution::shiftSymbols(int shift) {
 	std::map<char, int> shiftedDistribution;
 	for (std::map<char, int>::iterator it = distribution.begin(); it != distribution.end(); ++it) {
 
-		char symbol = it->first;
-		int shiftUnwrapped = (symbol - 'a') + (26 + shift);
-		int shiftWrapped = shiftUnwrapped % 26;
-		char shiftedSymbol = shiftWrapped + 'a';
-//		char shiftedSymbol = (int)(it->first - 'a' + shift) % 26 + 'a';
+		char shiftedSymbol = ((it->first - 'a') + (26 + shift)) % 26 + 'a';
 
 		shiftedDistribution[shiftedSymbol] = it->second;
 	}
