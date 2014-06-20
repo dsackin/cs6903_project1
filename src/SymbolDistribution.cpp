@@ -12,11 +12,14 @@
 
 
 SymbolDistribution::SymbolDistribution() {
+	this->alphabet = defaultAlphabet;
 	symbolCount = 0;
 	currentShift = 0;
 }
 
-SymbolDistribution::SymbolDistribution(std::string &text) {
+SymbolDistribution::SymbolDistribution(const std::string &text, const std::string &alphabet) {
+
+	this->alphabet = alphabet;
 
 	symbolCount = text.length();
 	deriveDistribution(text);
@@ -89,8 +92,8 @@ int SymbolDistribution::getCurrentShift() const {
 	return currentShift;
 }
 
-void SymbolDistribution::deriveDistribution(std::string &text) {
-	for (std::string::iterator it = text.begin(); it != text.end(); ++it) {
+void SymbolDistribution::deriveDistribution(const std::string &text) {
+	for (std::string::const_iterator it = text.begin(); it != text.end(); ++it) {
 		distribution[*it] += 1;
 	}
 }
@@ -100,7 +103,7 @@ void SymbolDistribution::shiftSymbols(int shift) {
 	std::map<char, int> shiftedDistribution;
 	for (std::map<char, int>::iterator it = distribution.begin(); it != distribution.end(); ++it) {
 
-		char shiftedSymbol = ((it->first - 'a') + (26 + shift)) % 26 + 'a';
+		char shiftedSymbol = ((it->first - getAlphabet()[0]) + (getAlphabetSize() + shift)) % getAlphabetSize() + getAlphabet()[0];
 
 		shiftedDistribution[shiftedSymbol] = it->second;
 	}
@@ -108,3 +111,23 @@ void SymbolDistribution::shiftSymbols(int shift) {
 	distribution = shiftedDistribution;
 	currentShift += shift;
 }
+
+std::string SymbolDistribution::getAlphabet() {
+	return alphabet;
+}
+
+void SymbolDistribution::setAlphabet(std::string alphabet) {
+	if (currentShift == 0)
+		this->alphabet = alphabet;
+	else {
+		int oldShift = currentShift;
+		shiftSymbols(-1 * currentShift);
+		this->alphabet = alphabet;
+		shiftSymbols(oldShift);
+	}
+
+}
+int SymbolDistribution::getAlphabetSize() {
+	return SymbolDistribution::alphabet.length();
+}
+

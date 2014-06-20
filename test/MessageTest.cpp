@@ -11,13 +11,8 @@
 
 class MessageTest: public ::testing::Test {
 	void SetUp() {
-		message = Message("abcd");
 	}
 
 protected:
-	Message message;
 };
-TEST_F(MessageTest, Message) {
-  ASSERT_EQ("abcd", message.getText());
-}
 

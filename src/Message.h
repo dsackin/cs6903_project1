@@ -11,24 +11,21 @@
 #include <string>
 #include <map>
 
+#include "SymbolDistribution.h"
+
 class Message {
 public:
-	Message();
-	Message(std::string s);
+	Message(std::string text, std::string &alphabet = defaultAlphabet);
 	virtual ~Message();
 
-	static std::map<char, int> CalculateDistribution(std::string s);
-
-	const std::map<char, int>& getDistribution() const;
-	void setDistribution(const std::map<char, int>& distribution);
-
 	const std::string& getText() const;
-	void setText(const std::string& text);
+	void setText(const std::string &text, std::string &alphabet = defaultAlphabet);
+	const SymbolDistribution& getDistribution() const;
+	void setDistribution(const SymbolDistribution& distribution);
 
 protected:
 	std::string text;
-	std::map<char, int> distribution;
-
+	SymbolDistribution distribution;
 };
 
 #endif /* MESSAGE_H_ */

@@ -9,8 +9,9 @@
 
 std::string dictionaryPath;
 std::string cipherPath;
-int keyLength;
+int keyLength = -1;
 
+//std::string defaultAlphabet = std::string("abcdefghijklmnopqrstuvwxyz");
 
 bool processArguments(int argc, char** argv) {
 	char c;
@@ -63,13 +64,13 @@ void printUsage(std::ostream &os) {
 			"this will be requested via stdin" << std::endl;
 }
 
-std::vector<std::string> readDictionary(std::string dictionaryPath) {
+std::vector<Message> readDictionary() {
 
-	std::vector<std::string> dictionary;
+	std::vector<Message> dictionary;
 
 	std::ifstream ifs(dictionaryPath.c_str(), std::ifstream::in);
     for (std::string line; std::getline(ifs, line); ) {
-    	dictionary.push_back(line);
+    	dictionary.push_back(Message(line));
     }
 
     ifs.close();
@@ -77,12 +78,28 @@ std::vector<std::string> readDictionary(std::string dictionaryPath) {
     return dictionary;
 }
 
-std::string readCipher(std::string cipherPath) {
+Message readCipher() {
+	std::string cipherText;
 
+	if (!cipherPath.empty()) {
+		std::ifstream ifs(dictionaryPath.c_str(), std::ifstream::in);
+	    std::getline(ifs, cipherText);
+	    ifs.close();
+	} else {
+		std::cout << "Enter cipher text: ";
+		std::cin >> cipherText;
+	}
+
+	return Message(cipherText);
 }
 
-bool readKeyLength(int currentKeyLength) {
+int readKeyLength() {
+	if (keyLength < 0) {
+		std::cout << "Enter key length (t): ";
+		std::cin >> keyLength;
+	}
 
+	return keyLength;
 }
 
 
@@ -94,12 +111,9 @@ int main(int argc, char **argv) {
 
 	std::cout << dictionaryPath << std::endl << keyLength << std::endl << cipherPath << std::endl;
 
-	std::vector<std::string> dictionary = readDictionary(dictionaryPath);
+	std::vector<Message> dictionary = readDictionary();
+	Message cipherText = readCipher();
+	int keyLength = readKeyLength();
 
-	std::cout << dictionary.size() << std::endl;
-
-	Message m = Message("abcd");
-
-	std::cout << m.getText();
 
 }

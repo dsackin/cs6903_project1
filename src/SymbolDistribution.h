@@ -12,14 +12,13 @@
 #include <string>
 #include <vector>
 
-#define ALPHABET "abcdefghijklmnopqrstuvwxyz"
-#define ALPHABET_SIZE "26"
+static std::string defaultAlphabet = std::string("abcdefghijklmnopqrstuvwxyz");
 
 class SymbolDistribution {
 public:
 
 	SymbolDistribution();
-	SymbolDistribution(std::string &text);
+	SymbolDistribution(const std::string &text, const std::string &alphabet = defaultAlphabet);
 	virtual ~SymbolDistribution();
 
 	bool equalByDistribution(SymbolDistribution &other);
@@ -33,7 +32,13 @@ public:
 	void shiftSymbols(int shift);
 	int getCurrentShift() const;
 
+	std::string getAlphabet();
+	void setAlphabet(const std::string alphabet);
+	int getAlphabetSize();
+
 protected:
+	std::string alphabet;
+
 	std::map<char, int> distribution;
 	int symbolCount;
 	int currentShift;
@@ -42,7 +47,7 @@ protected:
 
 	std::vector<std::pair<float, char> > extractFrequenciesNormalized();
 
-	void deriveDistribution(std::string &text);
+	void deriveDistribution(const std::string &text);
 };
 
 #endif /* SYMBOLDISTRIBUTION_H_ */
