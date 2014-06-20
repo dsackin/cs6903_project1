@@ -6,8 +6,10 @@
  */
 
 #include <algorithm>
+#include <iostream>
 
 #include "SymbolDistribution.h"
+#include "prettyprint/prettyprint.hpp"
 
 
 
@@ -29,10 +31,21 @@ SymbolDistribution::SymbolDistribution(const std::string &text, const std::strin
 SymbolDistribution::~SymbolDistribution() {
 
 }
+struct DistributionComparator
+{
+    bool operator() ( std::pair<int, char> lhs, std::pair<int, char> rhs)
+    {
+        return lhs.first == rhs.first;
+    }
+ };
 
 bool SymbolDistribution::equalByDistribution(SymbolDistribution &other) {
 
-	return extractFrequenciesRaw() == other.extractFrequenciesRaw();
+	std::vector<std::pair<int, char> > left, right;
+	left = extractFrequenciesRaw();
+	right = other.extractFrequenciesRaw();
+
+	return std::equal(left.begin(), left.end(), right.begin(), DistributionComparator());
 }
 
 bool SymbolDistribution::equalByNormalizedDistribution(SymbolDistribution &other) {
