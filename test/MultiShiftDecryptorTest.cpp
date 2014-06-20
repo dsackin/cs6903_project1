@@ -5,7 +5,10 @@
  *      Author: doug
  */
 
+#include <iostream>
+
 #include "gtest/gtest.h"
+#include "prettyprint/prettyprint.hpp"
 
 #include "../src/MultiShiftDecryptor.h"
 
@@ -51,6 +54,7 @@ TEST_F(MultiShiftDecryptorTest, ConstructorTest) {
 
   SymbolDistribution m0Sym = m0.getPlainSegments()[0].getDistribution();
   SymbolDistribution m00Sym = m00.getPlainSegments()[0].getDistribution();
+
   ASSERT_TRUE(m0Sym.equalByDistribution(m00Sym));
 
 }
