@@ -8,18 +8,19 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "MultiShiftDecryptor.h"
 
-MultiShiftDecryptor::MultiShiftDecryptor() {}
+MultiShiftDecryptor::MultiShiftDecryptor() : keyLength(1) {}
 
 MultiShiftDecryptor::MultiShiftDecryptor(int index, std::string plainText,
 		std::string cipherText, int keyLength) : Decryptor(index, plainText, cipherText) {
 
 	this->keyLength = keyLength;
 
-	plainSegments = deriveSegments(plainText, keyLength);
-	cipherSegments = deriveSegments(cipherText, keyLength);
+	this->plainSegments = deriveSegments(plainText, keyLength);
+	this->cipherSegments = deriveSegments(cipherText, keyLength);
 }
 
 MultiShiftDecryptor::~MultiShiftDecryptor() {
@@ -62,22 +63,71 @@ std::vector<Message> MultiShiftDecryptor::deriveSegments(std::string text, int k
 	return messages;
 }
 
-//int MultiShiftDecryptor::downSelectByDistribution() {
-//
-//	SymbolDistribution cipherDistribution = cipherText.getDistribution();
-//	int viableCandidates = plainTexts.size();
-//	for (int i = 0; i < plainTexts.size(); i++) {
-//		SymbolDistribution candidateDistribution =
-//				plainTexts[i].getDistribution();
-//		if (!cipherDistribution.equalByDistribution(candidateDistribution)) {
-//			plainTexts[i].exclude();
-//			viableCandidates--;
-//		}
+bool MultiShiftDecryptor::decrypt() {
+
+//	  std::string key(keyLength)
+//	  for (int i; i < keyLength; i++) {
+//		if (!cipherIntevals.at(i).getDistribution().equalByDistribution(candidateIntervals.at(i).getDistribution())
+//	  	return false;
+//		else {
+//	   	char keyValue = determineIntervalKey(i)
+//	   	if keyValue != '\0'
+//	      	key.insert(i, keyValue)
+//	   	else
+//	      	return false;
 //	}
-//	return viableCandidates;
-//}
 
+	for (int segmentIndex = 0; segmentIndex < keyLength; segmentIndex++) {
+		SymbolDistribution plainDistro = plainSegments[segmentIndex].getDistribution();
+		SymbolDistribution cipherDistro = cipherSegments[segmentIndex].getDistribution();
 
-int MultiShiftDecryptor::decrypt() {
-	return 0;
+		if (!cipherDistro.equalByDistribution(plainDistro))
+			return false;
+
+		char keyValue = determineSegmentKey(plainSegments[segmentIndex], cipherSegments[segmentIndex]);
+		if (keyValue != '\0')
+			keySolution += keyValue;
+		else
+			return false;
+	}
+
+	return true;
 }
+
+struct FrequencyComparator
+{
+    bool operator() ( const std::pair<int, char>& lhs, const std::pair<int, char>& rhs)
+    {
+        return lhs.first < rhs.first;
+    }
+ };
+
+char MultiShiftDecryptor::determineSegmentKey(Message &plainMessage, Message &cipherMessage) {
+	std::vector<std::pair<int, char> > plainFreqs = plainMessage.getDistribution().extractFrequenciesRaw();
+	std::vector<std::pair<int, char> > cipherFreqs = cipherMessage.getDistribution().extractFrequenciesRaw();
+
+	// extractFrequenciesRaw() returned vector of std::pair<int, char>
+	// stably sorted in ascending order by count, then symbol, so the
+	// most frequent symbol in the cipher should be the last pair in the list.
+	std::pair<int, char> cipherMostFrequentSymbol = cipherFreqs.back();
+	std::pair<std::vector<std::pair<int, char> >::iterator, std::vector<std::pair<int, char> >::iterator> cipherMaxSymbolRange = std::equal_range(cipherFreqs.begin(), cipherFreqs.end(), cipherFreqs.back(), FrequencyComparator());
+	std::pair<std::vector<std::pair<int, char> >::iterator, std::vector<std::pair<int, char> >::iterator> plainMaxSymbolRange = std::equal_range(plainFreqs.begin(), plainFreqs.end(), cipherFreqs.back(), FrequencyComparator());
+
+	char alphabetBase = plainMessage.getDistribution().getAlphabet()[0];
+	for ( std::vector<std::pair<int, char> >::iterator cipherSymbol = cipherMaxSymbolRange.first; cipherSymbol != cipherMaxSymbolRange.second; ++cipherSymbol) {
+		for ( std::vector<std::pair<int, char> >::iterator plainSymbol = plainMaxSymbolRange.first; plainSymbol != plainMaxSymbolRange.second; ++plainSymbol) {
+			int shift = cipherSymbol->second - plainSymbol->second;
+
+			std::string shiftedPlain = plainMessage.getShiftedText(shift);
+			if (cipherMessage.getText() == shiftedPlain) {
+				char keySymbol = shift + alphabetBase;
+				return alphabetBase;
+			}
+		}
+	}
+
+	// no matches
+	return '\0';
+}
+
+

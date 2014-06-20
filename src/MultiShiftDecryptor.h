@@ -22,7 +22,7 @@ public:
 			std::string cipherText, int keyLength = 1);
 	virtual ~MultiShiftDecryptor();
 
-	int decrypt();
+	bool decrypt();
 
 	const std::vector<Message>& getCipherSegments() const;
 	int getKeyLength() const;
@@ -30,11 +30,12 @@ public:
 
 protected:
 	int keyLength;
-
 	std::vector<Message> plainSegments;
 	std::vector<Message> cipherSegments;
 
 	static std::vector<Message> deriveSegments(std::string text, int keyLength);
-};
 
+	static char determineSegmentKey(Message &plainMessage, Message &cipherMessage);
+
+};
 #endif /* MULTISHIFTDECRYPTOR_H_ */

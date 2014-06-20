@@ -20,8 +20,9 @@ public:
 
 	const std::string& getText() const;
 	void setText(const std::string &text, std::string &alphabet = defaultAlphabet);
-	const SymbolDistribution& getDistribution() const;
 	void setDistribution(const SymbolDistribution& distribution);
+	std::string getShiftedText(int shift) const;
+	const SymbolDistribution& getDistribution() const;
 
 protected:
 	std::string text;

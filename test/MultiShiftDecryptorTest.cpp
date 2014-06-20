@@ -54,3 +54,8 @@ TEST_F(MultiShiftDecryptorTest, ConstructorTest) {
   ASSERT_TRUE(m0Sym.equalByDistribution(m00Sym));
 
 }
+
+TEST_F(MultiShiftDecryptorTest, DecryptTest) {
+	ASSERT_TRUE(m0.decrypt());
+	ASSERT_TRUE(m1.decrypt());
+}

@@ -32,9 +32,13 @@ public:
 	void shiftSymbols(int shift);
 	int getCurrentShift() const;
 
-	std::string getAlphabet();
+	const std::string getAlphabet() const;
 	void setAlphabet(const std::string alphabet);
-	int getAlphabetSize();
+	const int getAlphabetSize() const;
+
+	std::vector<std::pair<int, char> > extractFrequenciesRaw() const;
+	std::vector<std::pair<float, char> > extractFrequenciesNormalized() const;
+
 
 protected:
 	std::string alphabet;
@@ -43,11 +47,8 @@ protected:
 	int symbolCount;
 	int currentShift;
 
-	std::vector<std::pair<int, char> > extractFrequenciesRaw();
 
-	std::vector<std::pair<float, char> > extractFrequenciesNormalized();
-
-	void deriveDistribution(const std::string &text);
+	static std::map<char, int> deriveDistribution(const std::string &text);
 };
 
 #endif /* SYMBOLDISTRIBUTION_H_ */

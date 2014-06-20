@@ -13,7 +13,7 @@ Decryptor::Decryptor(int index, std::string plainText, std::string cipherText) {
 	this->cipherText = cipherText;
 }
 
-Decryptor::Decryptor() {}
+Decryptor::Decryptor() : dictionaryIndex(0) {}
 
 Decryptor::~Decryptor() {
 	// TODO Auto-generated destructor stub
@@ -42,4 +42,8 @@ const std::string& Decryptor::getPlainText() const {
 
 void Decryptor::setPlainText(const std::string& plainText) {
 	this->plainText = plainText;
+}
+
+const std::string& Decryptor::getKeySolution() const {
+	return keySolution;
 }

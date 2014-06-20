@@ -22,7 +22,7 @@ SymbolDistribution::SymbolDistribution(const std::string &text, const std::strin
 	this->alphabet = alphabet;
 
 	symbolCount = text.length();
-	deriveDistribution(text);
+	this->distribution = deriveDistribution(text);
 	currentShift = 0;
 }
 
@@ -45,11 +45,11 @@ bool SymbolDistribution::equalBySymbols(SymbolDistribution &other) {
 	return distribution == other.distribution;
 }
 
-std::vector<std::pair<int, char> > SymbolDistribution::extractFrequenciesRaw() {
+std::vector<std::pair<int, char> > SymbolDistribution::extractFrequenciesRaw() const {
 
 	std::vector<std::pair<int, char> > frequencies;
 
-	for (std::map<char, int>::iterator it = distribution.begin(); it != distribution.end(); ++it) {
+	for (std::map<char, int>::const_iterator it = distribution.begin(); it != distribution.end(); ++it) {
 		frequencies.push_back(std::pair<int, char>(it->second, it->first));
 	}
 
@@ -58,11 +58,11 @@ std::vector<std::pair<int, char> > SymbolDistribution::extractFrequenciesRaw() {
 	return frequencies;
 }
 
-std::vector<std::pair<float, char> > SymbolDistribution::extractFrequenciesNormalized() {
+std::vector<std::pair<float, char> > SymbolDistribution::extractFrequenciesNormalized() const {
 
 	std::vector<std::pair<float, char> > frequencies;
 
-	for (std::map<char, int>::iterator it = distribution.begin(); it != distribution.end(); ++it) {
+	for (std::map<char, int>::const_iterator it = distribution.begin(); it != distribution.end(); ++it) {
 		frequencies.push_back(std::pair<float, char>((float)it->second / symbolCount, it->first));
 	}
 
@@ -92,10 +92,13 @@ int SymbolDistribution::getCurrentShift() const {
 	return currentShift;
 }
 
-void SymbolDistribution::deriveDistribution(const std::string &text) {
+std::map<char, int> SymbolDistribution::deriveDistribution(const std::string &text) {
+	std::map<char, int> distribution;
 	for (std::string::const_iterator it = text.begin(); it != text.end(); ++it) {
 		distribution[*it] += 1;
 	}
+
+	return distribution;
 }
 
 void SymbolDistribution::shiftSymbols(int shift) {
@@ -112,7 +115,7 @@ void SymbolDistribution::shiftSymbols(int shift) {
 	currentShift += shift;
 }
 
-std::string SymbolDistribution::getAlphabet() {
+const std::string SymbolDistribution::getAlphabet() const {
 	return alphabet;
 }
 
@@ -127,7 +130,7 @@ void SymbolDistribution::setAlphabet(std::string alphabet) {
 	}
 
 }
-int SymbolDistribution::getAlphabetSize() {
+const int SymbolDistribution::getAlphabetSize() const {
 	return SymbolDistribution::alphabet.length();
 }
 

@@ -13,13 +13,14 @@
 class Decryptor {
 public:
 
-	int decrypt();
+	bool decrypt();
 	const std::string& getCipherText() const;
 	void setCipherText(const std::string& cipherText);
 	int getDictionaryIndex() const;
 	void setDictionaryIndex(int dictionaryIndex);
 	const std::string& getPlainText() const;
 	void setPlainText(const std::string& plainText);
+	const std::string& getKeySolution() const;
 
 protected:
 
@@ -30,6 +31,7 @@ protected:
 	int dictionaryIndex;
 	std::string plainText;
 	std::string cipherText;
+	std::string keySolution;
 };
 
 #endif /* DECRYPTOR_H_ */
