@@ -1,9 +1,13 @@
+#include <getopt.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 
-#include "Message.h"
+#include "prettyprint/prettyprint.hpp"
+
+#include "MultiShiftDecryptor.h"
 
 #define MAX_MESSAGE_LENGTH 300
 
@@ -64,13 +68,13 @@ void printUsage(std::ostream &os) {
 			"this will be requested via stdin" << std::endl;
 }
 
-std::vector<Message> readDictionary() {
+std::vector<std::string> readDictionary() {
 
-	std::vector<Message> dictionary;
+	std::vector<std::string> dictionary;
 
 	std::ifstream ifs(dictionaryPath.c_str(), std::ifstream::in);
     for (std::string line; std::getline(ifs, line); ) {
-    	dictionary.push_back(Message(line));
+    	dictionary.push_back(line);
     }
 
     ifs.close();
@@ -78,7 +82,7 @@ std::vector<Message> readDictionary() {
     return dictionary;
 }
 
-Message readCipher() {
+std::string readCipher() {
 	std::string cipherText;
 
 	if (!cipherPath.empty()) {
@@ -90,7 +94,7 @@ Message readCipher() {
 		std::cin >> cipherText;
 	}
 
-	return Message(cipherText);
+	return cipherText;
 }
 
 int readKeyLength() {
@@ -109,11 +113,29 @@ int main(int argc, char **argv) {
 		printUsage(std::cout);
 	}
 
-	std::cout << dictionaryPath << std::endl << keyLength << std::endl << cipherPath << std::endl;
-
-	std::vector<Message> dictionary = readDictionary();
-	Message cipherText = readCipher();
+	std::vector<std::string> dictionary = readDictionary();
+	std::string cipherText = readCipher();
 	int keyLength = readKeyLength();
 
+	int plainTextMatchIndex = -1;
+	std::string keyString;
+	std::vector<int> keyShifts;
+	for (int i = 0; i < dictionary.size(); i++) {
+		MultiShiftDecryptor decryptor(i, dictionary[i], cipherText, keyLength);
+		if (decryptor.decrypt()) {
+			plainTextMatchIndex = decryptor.getDictionaryIndex();
+			keyString = decryptor.getKeyString();
+			keyShifts = decryptor.getKeyShifts();
+			break;
+		}
+	}
+
+	if (plainTextMatchIndex >= 0) {
+		std::cout << "Decrypted cipher text found to match plain text at index ";
+		std::cout << plainTextMatchIndex << " using the following key '";
+		std::cout << keyString << "'." << std::endl;
+	} else {
+		std::cout << "No match found." << std::endl;
+	}
 
 }

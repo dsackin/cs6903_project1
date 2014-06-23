@@ -22,7 +22,6 @@ public:
 	virtual ~SymbolDistribution();
 
 	bool equalByDistribution(SymbolDistribution &other);
-	bool equalByNormalizedDistribution(SymbolDistribution &other);
 	bool equalBySymbols(SymbolDistribution &other);
 	const std::map<char, int>& getDistribution() const;
 	void setDistribution(const std::map<char, int>& distribution);
@@ -36,9 +35,7 @@ public:
 	void setAlphabet(const std::string alphabet);
 	const int getAlphabetSize() const;
 
-	std::vector<std::pair<int, char> > extractFrequenciesRaw() const;
-	std::vector<std::pair<float, char> > extractFrequenciesNormalized() const;
-
+	std::vector<std::pair<int, char> > extractFrequencies() const;
 
 protected:
 	std::string alphabet;

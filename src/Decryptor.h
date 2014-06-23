@@ -20,7 +20,8 @@ public:
 	void setDictionaryIndex(int dictionaryIndex);
 	const std::string& getPlainText() const;
 	void setPlainText(const std::string& plainText);
-	const std::string& getKeySolution() const;
+	const std::string &getKeyString() const;
+	const std::vector<int> &getKeyShifts() const;
 
 protected:
 
@@ -28,10 +29,13 @@ protected:
 	Decryptor();
 	virtual ~Decryptor();
 
+	void initialize();
+
 	int dictionaryIndex;
+	bool isInitialized;
 	std::string plainText;
 	std::string cipherText;
-	std::string keySolution;
+	std::vector<std::pair<int, char> > keySolution;
 };
 
 #endif /* DECRYPTOR_H_ */

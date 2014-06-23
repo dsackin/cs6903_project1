@@ -24,7 +24,7 @@ class SymbolDistributionTest: public ::testing::Test {
 		d3 = SymbolDistribution(s);
 
 		s = "thisisadifferentdistribution";
-		d4 = SymbolDistribution();
+		d4 = SymbolDistribution(s);
 
 		m1dist['a'] = 3;
 		m1dist['b'] = 3;
@@ -87,17 +87,14 @@ TEST_F(SymbolDistributionTest, DistributionDerivation) {
 
 TEST_F(SymbolDistributionTest, DistributionEquality) {
 	ASSERT_TRUE(d1.equalByDistribution(d2));
-	ASSERT_TRUE(d1.equalByNormalizedDistribution(d2));
 	ASSERT_TRUE(d1.equalBySymbols(d2));
 	ASSERT_FALSE(d1.equalByDistribution(d3));
-	ASSERT_TRUE(d1.equalByNormalizedDistribution(d3));
 	ASSERT_FALSE(d1.equalBySymbols(d3));
 	ASSERT_FALSE(d1.equalBySymbols(d4));
 	ASSERT_FALSE(d1.equalByDistribution(d4));
-	ASSERT_FALSE(d1.equalByNormalizedDistribution(d4));
 	ASSERT_FALSE(d1.equalBySymbols(d0));
 	ASSERT_FALSE(d1.equalByDistribution(d0));
-	ASSERT_FALSE(d1.equalByNormalizedDistribution(d0));
+	ASSERT_FALSE(d1.equalByDistribution(d0));
 }
 
 TEST_F(SymbolDistributionTest, SymbolShift) {
@@ -107,16 +104,14 @@ TEST_F(SymbolDistributionTest, SymbolShift) {
 	ASSERT_EQ(3, d3.getCurrentShift());
 
 	ASSERT_EQ(s1dist, d1.getDistribution());
-	ASSERT_FALSE(d1.equalByDistribution(d2));
-	ASSERT_FALSE(d1.equalByNormalizedDistribution(d2));
-	ASSERT_TRUE(d1.equalByNormalizedDistribution(d3));
+	ASSERT_TRUE(d1.equalByDistribution(d2));
 	ASSERT_FALSE(d1.equalByDistribution(d4));
 
 	d2.shiftSymbols(-2);
 	ASSERT_EQ(-2, d2.getCurrentShift());
 
 	ASSERT_EQ(s2dist, d2.getDistribution());
-	ASSERT_FALSE(d2.equalByDistribution(d1));
+	ASSERT_TRUE(d2.equalByDistribution(d1));
 
 	d1.shiftSymbols(-5);
 	ASSERT_EQ(-2, d1.getCurrentShift());

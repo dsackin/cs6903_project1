@@ -22,18 +22,22 @@ class MultiShiftDecryptorTest: public ::testing::Test {
 		p3 = "efghiefghiefghiefghiefghiefghiefg";
 		c3 = "defghdefghdefghdefghdefghdefghdef";
 
-		m0 = MultiShiftDecryptor(0, p1, c1, 1);
-		m1 = MultiShiftDecryptor(1, "abcabcab", "bcdbcdbc", 3);
+		m0 = MultiShiftDecryptor(0, p1, c1, 1);			// key = 'a'
+		m1 = MultiShiftDecryptor(1, p1, c1, 3);			// key = 'aaa'
 
-		m00 = MultiShiftDecryptor(0, "bacbacba", "zyazyazy", 1);
-		m2 = MultiShiftDecryptor(2, "bacbacba", "zyazyazy", 3);
+		m00 = MultiShiftDecryptor(0, p2, c2, 1);		// key = 'y'
+		m2 = MultiShiftDecryptor(2, p2, c2, 3);			// key = 'yyy'
 
-		m3 = MultiShiftDecryptor(3, "efghiefghiefghiefghiefghiefghiefg", "defghdefghdefghdefghdefghdefghdef", 5);
+		m3 = MultiShiftDecryptor(3, p3, c3, 5); 		// key = 'zzzzz'
+
+		m4 = MultiShiftDecryptor(4, p1, p2, 1);			// no key
+
+		m5 = MultiShiftDecryptor(0, p3, c2, 1);			// different lengths, no key
 
 	}
 
 protected:
-	MultiShiftDecryptor m0, m00, m1, m2, m3;
+	MultiShiftDecryptor m0, m00, m1, m2, m3, m4, m5, m6;
 	std::string p1, c1, p2, c2, p3, c3;
 };
 
@@ -60,6 +64,17 @@ TEST_F(MultiShiftDecryptorTest, ConstructorTest) {
 }
 
 TEST_F(MultiShiftDecryptorTest, DecryptTest) {
-	ASSERT_TRUE(m0.decrypt());
-	ASSERT_TRUE(m1.decrypt());
+//	ASSERT_TRUE(m0.decrypt());
+//	ASSERT_EQ(m0.getKeySolution(), "a");
+//	ASSERT_TRUE(m1.decrypt());
+//	ASSERT_EQ(m1.getKeySolution(), "aaa");
+	ASSERT_TRUE(m2.decrypt());
+	ASSERT_EQ(m2.getKeySolution(), "yyy");
+	ASSERT_TRUE(m3.decrypt());
+	ASSERT_EQ(m3.getKeySolution(), "zzzzz");
+	ASSERT_TRUE(m00.decrypt());
+	ASSERT_EQ(m00.getKeySolution(), "y");
+	ASSERT_FALSE(m4.decrypt());
+	ASSERT_FALSE(m5.decrypt());
+
 }

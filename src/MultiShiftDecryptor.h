@@ -33,9 +33,11 @@ protected:
 	std::vector<Message> plainSegments;
 	std::vector<Message> cipherSegments;
 
+	void initialize();
+
 	static std::vector<Message> deriveSegments(std::string text, int keyLength);
 
-	static char determineSegmentKey(Message &plainMessage, Message &cipherMessage);
+	static int determineSegmentKey(Message &plainMessage, Message &cipherMessage);
 
 };
 #endif /* MULTISHIFTDECRYPTOR_H_ */

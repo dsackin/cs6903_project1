@@ -31,9 +31,9 @@ SymbolDistribution::SymbolDistribution(const std::string &text, const std::strin
 SymbolDistribution::~SymbolDistribution() {
 
 }
-struct DistributionComparator
+struct FrequencyEqualityComparator
 {
-    bool operator() ( std::pair<int, char> lhs, std::pair<int, char> rhs)
+    bool operator() ( std::pair<float, char> lhs, std::pair<float, char> rhs)
     {
         return lhs.first == rhs.first;
     }
@@ -42,15 +42,15 @@ struct DistributionComparator
 bool SymbolDistribution::equalByDistribution(SymbolDistribution &other) {
 
 	std::vector<std::pair<int, char> > left, right;
-	left = extractFrequenciesRaw();
-	right = other.extractFrequenciesRaw();
+	left = extractFrequencies();
+	right = other.extractFrequencies();
 
-	return std::equal(left.begin(), left.end(), right.begin(), DistributionComparator());
-}
+//	std::cout << left << std::endl << right << std::endl;
 
-bool SymbolDistribution::equalByNormalizedDistribution(SymbolDistribution &other) {
+	if (left.size() != right.size())
+		return false;
 
-	return extractFrequenciesNormalized() == other.extractFrequenciesNormalized();
+	return std::equal(left.begin(), left.end(), right.begin(), FrequencyEqualityComparator());
 }
 
 
@@ -58,25 +58,15 @@ bool SymbolDistribution::equalBySymbols(SymbolDistribution &other) {
 	return distribution == other.distribution;
 }
 
-std::vector<std::pair<int, char> > SymbolDistribution::extractFrequenciesRaw() const {
+std::vector<std::pair<int, char> > SymbolDistribution::extractFrequencies() const {
 
 	std::vector<std::pair<int, char> > frequencies;
 
+	std::pair<int, char> symbolFrequency;
 	for (std::map<char, int>::const_iterator it = distribution.begin(); it != distribution.end(); ++it) {
-		frequencies.push_back(std::pair<int, char>(it->second, it->first));
-	}
+		symbolFrequency = std::pair<int, char>(it->second, it->first);
 
-	std::stable_sort(frequencies.begin(), frequencies.end());
-
-	return frequencies;
-}
-
-std::vector<std::pair<float, char> > SymbolDistribution::extractFrequenciesNormalized() const {
-
-	std::vector<std::pair<float, char> > frequencies;
-
-	for (std::map<char, int>::const_iterator it = distribution.begin(); it != distribution.end(); ++it) {
-		frequencies.push_back(std::pair<float, char>((float)it->second / symbolCount, it->first));
+		frequencies.push_back(symbolFrequency);
 	}
 
 	std::stable_sort(frequencies.begin(), frequencies.end());
