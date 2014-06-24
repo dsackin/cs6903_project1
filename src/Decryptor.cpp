@@ -51,18 +51,4 @@ void Decryptor::setPlainText(const std::string& plainText) {
 	this->plainText = plainText;
 }
 
-const std::string& Decryptor::getKeyString() const {
-	std::string keyString;
-	for (std::vector<std::pair<int, char> >::const_iterator it = keySolution.begin(); it != keySolution.end(); ++it) {
-		keyString +=  it->second;
-	}
-	return keyString;
-}
 
-const std::vector<int> &Decryptor::getKeyShifts() const {
-	std::vector<int> keyShifts;
-	for (std::vector<std::pair<int, char> >::const_iterator it = keySolution.begin(); it != keySolution.end(); ++it) {
-		keyShifts.push_back(it->first);
-	}
-	return keyShifts;
-}

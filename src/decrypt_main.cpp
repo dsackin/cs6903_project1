@@ -8,20 +8,43 @@
 #include "prettyprint/prettyprint.hpp"
 
 #include "MultiShiftDecryptor.h"
-
-#define MAX_MESSAGE_LENGTH 300
+#include "Dictionary.h"
 
 std::string dictionaryPath;
 std::string cipherPath;
 int keyLength = -1;
 
-//std::string defaultAlphabet = std::string("abcdefghijklmnopqrstuvwxyz");
+void printUsage(std::ostream &os) {
+	os << "Usage: decrypt [-d <dictionaryPath>] [-c <cipherPath>] [-t <keyLength>]" << std::endl;
+	os << "Attempts to decrypt a cipher text and identify the originating plain text from " << std::endl;
+	os << "a dictionary of plain texts. " << std::endl;
+	os << std::endl;
+	os << std::endl;
+	os << "This program requires the dictionary, cipher text, and key length as inputs. " << std::endl;
+	os << "You may specify any or none of these on the command line. If no dictionary " << std::endl;
+	os << "path is provided, the default dictionary embedded in the program will be " << std::endl;
+	os << "assumed. The rest will be collected from stdin." << std::endl;
+	os << std::endl;
+	os << "-d <dictionaryPath> - optional path to a text file containing one plain text " << std::endl;
+	os << "   candidate per line" << std::endl;
+	os << "-c <cipherPath> - optional path to a text file containing a single line of " << std::endl;
+	os << "   cipher text for the decryption attempt. If not provided as an argument, " << std::endl;
+	os << "   this will be requested via stdin" << std::endl;
+	os << "-t <keyLength> - optional integer length of a key phrase believed to be used " << std::endl;
+	os << "   in the encryption. If not provided as an argument, this will be requested " << std::endl;
+	os << "   via stdin" << std::endl;
+	os << std::endl;
+}
 
-bool processArguments(int argc, char** argv) {
+
+void processArguments(int argc, char** argv) {
 	char c;
 
-	while ((c = getopt(argc, argv, "d:t:c:")) != -1)
+	while ((c = getopt(argc, argv, "hd:t:c:")) != -1)
 		switch (c) {
+		case 'h':
+			printUsage(std::cout);
+			abort();
 		case 'd':
 			dictionaryPath = std::string(optarg);
 			break;
@@ -44,29 +67,8 @@ bool processArguments(int argc, char** argv) {
 	if (dictionaryPath.empty() && optind < argc)
 		dictionaryPath = std::string(argv[optind]);
 
-	if (!dictionaryPath.empty())
-		return true;
-	else
-		return false;
 }
 
-void printUsage(std::ostream &os) {
-	os << "Usage: decrypt -d <dictionaryPath> [-c <cipherPath>] [-t <keyLength>]" << std::endl;
-	os << "or:    decrypt <dictionaryPath>" << std::endl;
-	os << std::endl << "Attempts to decrypt a cipher text and identify the " <<
-			"originating plain text from a dictionary of plain texts. You may " <<
-			"specify the first form and provide all program inputs on the " <<
-			"command line or use the second form and provide the key length " <<
-			"and cipher text through stdin" << std::endl;
-	os << std::endl << "-d <dictionaryPath> - optional path to a text file containing " <<
-			"one plain text candidate per line" << std::endl;
-	os << "-c <cipherPath> - optional path to a text file containing a single " <<
-			"line of cipher text for the decryption attempt. If not provided " <<
-			"as an argument, this will be requested via stdin" << std::endl;
-	os << "-t <keyLength> - optional integer length of a key phrase believed " <<
-			"to be used in the encryption. If not provided as an argument, " <<
-			"this will be requested via stdin" << std::endl;
-}
 
 std::vector<std::string> readDictionary() {
 
@@ -109,31 +111,31 @@ int readKeyLength() {
 
 int main(int argc, char **argv) {
 
-	if (!processArguments(argc, argv)) {
-		printUsage(std::cout);
-	}
+	processArguments(argc, argv);
 
-	std::vector<std::string> dictionary = readDictionary();
+	std::vector<std::string> dictionary;
+	if (!dictionaryPath.empty())
+		dictionary = readDictionary();
+	else
+		dictionary = loadDefaultDictionary();
+
 	std::string cipherText = readCipher();
 	int keyLength = readKeyLength();
 
 	int plainTextMatchIndex = -1;
-	std::string keyString;
-	std::vector<int> keyShifts;
-	for (int i = 0; i < dictionary.size(); i++) {
-		MultiShiftDecryptor decryptor(i, dictionary[i], cipherText, keyLength);
-		if (decryptor.decrypt()) {
-			plainTextMatchIndex = decryptor.getDictionaryIndex();
-			keyString = decryptor.getKeyString();
-			keyShifts = decryptor.getKeyShifts();
+	std::string explanation;
+	for (unsigned int i = 0; i < dictionary.size(); i++) {
+		Decryptor *decryptor = new MultiShiftDecryptor(i, dictionary[i], cipherText, keyLength);
+		if (decryptor->decrypt()) {
+			plainTextMatchIndex = decryptor->getDictionaryIndex();
+			explanation = decryptor->getExplanation();
+			delete decryptor;
 			break;
 		}
 	}
 
 	if (plainTextMatchIndex >= 0) {
-		std::cout << "Decrypted cipher text found to match plain text at index ";
-		std::cout << plainTextMatchIndex << " using the following key '";
-		std::cout << keyString << "'." << std::endl;
+		std::cout << explanation << std::endl;
 	} else {
 		std::cout << "No match found." << std::endl;
 	}

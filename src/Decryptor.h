@@ -12,22 +12,22 @@
 
 class Decryptor {
 public:
+	Decryptor(int index, std::string plainText, std::string cipherText);
+	Decryptor();
+	virtual ~Decryptor();
 
-	bool decrypt();
+	virtual bool decrypt() = 0;
 	const std::string& getCipherText() const;
 	void setCipherText(const std::string& cipherText);
 	int getDictionaryIndex() const;
 	void setDictionaryIndex(int dictionaryIndex);
 	const std::string& getPlainText() const;
 	void setPlainText(const std::string& plainText);
-	const std::string &getKeyString() const;
-	const std::vector<int> &getKeyShifts() const;
+	virtual const std::string getExplanation() const = 0;
 
 protected:
 
-	Decryptor(int index, std::string plainText, std::string cipherText);
-	Decryptor();
-	virtual ~Decryptor();
+
 
 	void initialize();
 
@@ -35,7 +35,6 @@ protected:
 	bool isInitialized;
 	std::string plainText;
 	std::string cipherText;
-	std::vector<std::pair<int, char> > keySolution;
 };
 
 #endif /* DECRYPTOR_H_ */

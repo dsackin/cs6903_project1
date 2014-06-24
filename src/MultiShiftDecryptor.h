@@ -27,11 +27,15 @@ public:
 	const std::vector<Message>& getCipherSegments() const;
 	int getKeyLength() const;
 	const std::vector<Message>& getPlainSegments() const;
+	const std::string getExplanation() const;
+	const std::vector<int> &getKeyShifts() const;
+	const std::string getKeyString() const;
 
 protected:
 	int keyLength;
 	std::vector<Message> plainSegments;
 	std::vector<Message> cipherSegments;
+	std::vector<int> keyShifts;
 
 	void initialize();
 
