@@ -2,9 +2,9 @@
  * MultiShiftDecryptor.cpp
  *
  *  Created on: Jun 17, 2014
- *      Author: doug
+ *      Author: Douglas Sackin, NYU CS6903, Summer 2014
  */
-
+/*
 #include <math.h>
 #include <iostream>
 #include <sstream>
@@ -167,4 +167,4 @@ int MultiShiftDecryptor::determineSegmentKey(Message &plainMessage, Message &cip
 	return -1;
 }
 
-
+*/

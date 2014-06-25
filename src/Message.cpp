@@ -2,9 +2,9 @@
  * Message.cpp
  *
  *  Created on: Jun 15, 2014
- *      Author: doug
+ *      Author: Douglas Sackin, NYU CS6903, Summer 2014
  */
-
+/*
 #include "Message.h"
 
 
@@ -26,10 +26,6 @@ void Message::setText(const std::string &text, std::string &alphabet) {
 	distribution = SymbolDistribution(text, alphabet);
 }
 
-void Message::setDistribution(const SymbolDistribution& distribution) {
-	this->distribution = distribution;
-}
-
 std::string Message::getShiftedText(int shift) const {
 	std::string shiftedText;
 
@@ -39,7 +35,11 @@ std::string Message::getShiftedText(int shift) const {
 
 	char shiftedSymbol;
 	for (std::string::const_iterator it = text.begin(); it != text.end(); ++it) {
-		shiftedSymbol = ((*it - alphabetBase) + (alphabetSize + shift)) % alphabetSize + alphabetBase;
+		//	old calculation not respecting alphabet
+//		shiftedSymbol = ((*it - alphabetBase) + (alphabetSize + shift)) % alphabetSize + alphabetBase;
+
+		// new calculation using specified alphabet. Does NOT check that character is IN the alphabet.
+		shiftedSymbol = getDistribution().getAlphabet()[((*it - alphabetBase) + (alphabetSize + shift)) % alphabetSize];
 		shiftedText += shiftedSymbol;
 	}
 
@@ -49,3 +49,4 @@ std::string Message::getShiftedText(int shift) const {
 const SymbolDistribution& Message::getDistribution() const {
 	return distribution;
 }
+*/

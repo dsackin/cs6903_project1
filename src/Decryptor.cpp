@@ -2,9 +2,10 @@
  * Decryptor.cpp
  *
  *  Created on: Jun 18, 2014
- *      Author: doug
+ *      Author: Douglas Sackin, NYU CS6903, Summer 2014
  */
 
+/*
 #include <vector>
 
 #include "Decryptor.h"
@@ -50,5 +51,5 @@ const std::string& Decryptor::getPlainText() const {
 void Decryptor::setPlainText(const std::string& plainText) {
 	this->plainText = plainText;
 }
-
+*/
 

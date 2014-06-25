@@ -1,8 +1,11 @@
-/*
+/**
  * Dictionary.h
  *
+ * Embed the default dictionary of plain text message candidates for the cipher
+ * challenges
+ *
  *  Created on: Jun 23, 2014
- *      Author: doug
+ *      Author: Douglas Sackin, NYU CS6903, Summer 2014
  */
 
 #ifndef DICTIONARY_H_
@@ -11,6 +14,13 @@
 #include <string>
 #include <vector>
 
+
+/**
+ * Returns a vector of hard-coded plain text strings to serve as the message
+ * candidates for the cipher challenge.
+ *
+ * @return std::vector<std::string>
+ */
 std::vector<std::string> loadDefaultDictionary() {
 	std::vector<std::string> defaultDictionary;
 

@@ -2,9 +2,10 @@
  * SymbolDistribution.cpp
  *
  *  Created on: Jun 15, 2014
- *      Author: doug
+ *      Author: Douglas Sackin, NYU CS6903, Summer 2014
  */
 
+/*
 #include <algorithm>
 #include <iostream>
 
@@ -78,17 +79,8 @@ const std::map<char, int>& SymbolDistribution::getDistribution() const {
 	return distribution;
 }
 
-void SymbolDistribution::setDistribution(
-		const std::map<char, int>& distribution) {
-	this->distribution = distribution;
-}
-
 int SymbolDistribution::getSymbolCount() const {
 	return symbolCount;
-}
-
-void SymbolDistribution::setSymbolCount(int symbolCount) {
-	this->symbolCount = symbolCount;
 }
 
 int SymbolDistribution::getCurrentShift() const {
@@ -136,4 +128,4 @@ void SymbolDistribution::setAlphabet(std::string alphabet) {
 const int SymbolDistribution::getAlphabetSize() const {
 	return SymbolDistribution::alphabet.length();
 }
-
+*/

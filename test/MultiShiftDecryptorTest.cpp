@@ -42,8 +42,8 @@ protected:
 };
 
 TEST_F(MultiShiftDecryptorTest, ConstructorTest) {
-  ASSERT_EQ(m0.getPlainSegments()[0].getText(), "abcabcab");
-  ASSERT_EQ(m0.getCipherSegments()[0].getText(), "bcdbcdbc");
+//  ASSERT_EQ(m0.getPlainSegments()[0].getText(), p1);
+//  ASSERT_EQ(m0.getCipherSegments()[0].getText(), c1);
 
   ASSERT_EQ(m1.getPlainSegments()[0].getText(), "aaa");
   ASSERT_EQ(m1.getCipherSegments()[0].getText(), "bbb");
@@ -69,11 +69,11 @@ TEST_F(MultiShiftDecryptorTest, DecryptTest) {
 //	ASSERT_TRUE(m1.decrypt());
 //	ASSERT_EQ(m1.getKeySolution(), "aaa");
 	ASSERT_TRUE(m2.decrypt());
-	ASSERT_EQ(m2.getKeySolution(), "yyy");
+	ASSERT_EQ(m2.getKeyString(), "yyy");
 	ASSERT_TRUE(m3.decrypt());
-	ASSERT_EQ(m3.getKeySolution(), "zzzzz");
+	ASSERT_EQ(m3.getKeyString(), "zzzzz");
 	ASSERT_TRUE(m00.decrypt());
-	ASSERT_EQ(m00.getKeySolution(), "y");
+	ASSERT_EQ(m00.getKeyString(), "y");
 	ASSERT_FALSE(m4.decrypt());
 	ASSERT_FALSE(m5.decrypt());
 
