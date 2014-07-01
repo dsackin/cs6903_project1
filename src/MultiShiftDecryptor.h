@@ -49,12 +49,6 @@ class MultiShiftDecryptor : public Decryptor {
 public:
 
 	/**
-	 * Default constructor initializes the key length to 1 (simple shift) and
-	 * leverages the Decrypt default constructor
-	 */
-	MultiShiftDecryptor() : keyLength(1) {}
-
-	/**
 	 * Common constructor takes the inputs and initializes the decryptors
 	 * values. Passes most values to the Decrypt constructor.
 	 * @param index - integer dictionary index
@@ -159,34 +153,32 @@ public:
 	 * @return std::string - explanatory message
 	 */
 	const std::string getExplanation() const {
-
-		// if we don't have key shifts, we were not successful
-		if (getKeyShifts().empty())
-			return "The cipher text to plain text at index " +
-					getDictionaryIndex() + " was not a match using key length "
-					+ getKeyLength();
-
 		std::string explanation;
 		std::ostringstream os(explanation);
 
-		os << "Decrypted cipher text found to match plain text at index " <<
-				dictionaryIndex << ". This appears to be a ";
-
-		// test for a single shift repeated by building a set
-		std::set<int> uniqueShifts(getKeyShifts().begin(), getKeyShifts().end());
-
-		if (uniqueShifts.size() == 1) {
-			// only 1 shift value repeated T times
-			char keySymbol = *(uniqueShifts.begin()) +
-					plainSegments[0].getDistribution().getAlphabet()[0];
-			os << "simple shift cipher using a shift of " <<
-					*uniqueShifts.begin() << " or '" << keySymbol << "'.";
+		// if we don't have key shifts, we were not successful
+		if (getKeyShifts().empty()) {
+			os << "The cipher text to plain text at index " << getDictionaryIndex() << " was not a match using key length " << getKeyLength() << std::endl;
 		} else {
-			// multiple shift values. Report these and get the key string.
-			os << "polyalphabetic shift cipher with effective shift sequence of "
-					<< getKeyShifts() << " or '" << getKeyString() << "'.";
-		}
 
+			os << "Decrypted cipher text found to match plain text at index " <<
+					dictionaryIndex << ". This appears to be a ";
+
+			// test for a single shift repeated by building a set
+			std::set<int> uniqueShifts(getKeyShifts().begin(), getKeyShifts().end());
+
+			if (uniqueShifts.size() == 1) {
+				// only 1 shift value repeated T times
+				char keySymbol = *(uniqueShifts.begin()) +
+						plainSegments[0].getDistribution().getAlphabet()[0];
+				os << "simple shift cipher using a shift of " <<
+						*uniqueShifts.begin() << " or '" << keySymbol << "'.";
+			} else {
+				// multiple shift values. Report these and get the key string.
+				os << "polyalphabetic shift cipher with effective shift sequence of "
+						<< getKeyShifts() << " or '" << getKeyString() << "'.";
+			}
+		}
 		return std::string(os.str());
 	}
 
