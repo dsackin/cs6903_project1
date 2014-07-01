@@ -303,25 +303,39 @@ protected:
 	 * @return int - positive shift value required to transform plain text to
 	 * cipher text. -1 if no shift found.
 	 */
-	static int determineSegmentKey(Message &plainMessage, Message &cipherMessage) {
+	static int determineSegmentKey(Message &plainMessage,
+			Message &cipherMessage) {
 
 		// invert distributions to get <int, char> pairs of counts per symbol
-		std::vector<std::pair<int, char> > plainFreqs = plainMessage.getDistribution().extractFrequencies();
-		std::vector<std::pair<int, char> > cipherFreqs = cipherMessage.getDistribution().extractFrequencies();
+		std::vector<std::pair<int, char> > plainFreqs =
+				plainMessage.getDistribution().extractFrequencies();
+		std::vector<std::pair<int, char> > cipherFreqs =
+				cipherMessage.getDistribution().extractFrequencies();
 
 		// find most frequent cipher text symbol (we need to start some place)
 		std::pair<int, char> cipherMostFrequentSymbol = cipherFreqs.back();
 
 		// find all symbols with same count in cipher and plain text segments
-		std::pair<std::vector<std::pair<int, char> >::iterator, std::vector<std::pair<int, char> >::iterator> cipherMaxSymbolRange = std::equal_range(cipherFreqs.begin(), cipherFreqs.end(), cipherMostFrequentSymbol, FrequencyOrderComparator());
-		std::pair<std::vector<std::pair<int, char> >::iterator, std::vector<std::pair<int, char> >::iterator> plainMaxSymbolRange = std::equal_range(plainFreqs.begin(), plainFreqs.end(), cipherMostFrequentSymbol, FrequencyOrderComparator());
+		std::pair<std::vector<std::pair<int, char> >::iterator,
+				std::vector<std::pair<int, char> >::iterator> cipherMaxSymbolRange =
+				std::equal_range(cipherFreqs.begin(), cipherFreqs.end(),
+						cipherMostFrequentSymbol, FrequencyOrderComparator());
+		std::pair<std::vector<std::pair<int, char> >::iterator,
+				std::vector<std::pair<int, char> >::iterator> plainMaxSymbolRange =
+				std::equal_range(plainFreqs.begin(), plainFreqs.end(),
+						cipherMostFrequentSymbol, FrequencyOrderComparator());
 
 		// check each plain-cipher combination of equal frequency symbols to
 		// identify possible shifts
 		int alphabetSize = plainMessage.getDistribution().getAlphabetSize();
-		for ( std::vector<std::pair<int, char> >::iterator cipherSymbol = cipherMaxSymbolRange.first; cipherSymbol != cipherMaxSymbolRange.second; ++cipherSymbol) {
-			for ( std::vector<std::pair<int, char> >::iterator plainSymbol = plainMaxSymbolRange.first; plainSymbol != plainMaxSymbolRange.second; ++plainSymbol) {
-				int shift = ((cipherSymbol->second - plainSymbol->second) + alphabetSize) % alphabetSize;
+		for (std::vector<std::pair<int, char> >::iterator cipherSymbol =
+				cipherMaxSymbolRange.first;
+				cipherSymbol != cipherMaxSymbolRange.second; ++cipherSymbol) {
+			for (std::vector<std::pair<int, char> >::iterator plainSymbol =
+					plainMaxSymbolRange.first;
+					plainSymbol != plainMaxSymbolRange.second; ++plainSymbol) {
+				int shift = ((cipherSymbol->second - plainSymbol->second)
+						+ alphabetSize) % alphabetSize;
 
 				// simulate shift of plain text
 				std::string shiftedPlain = plainMessage.getShiftedText(shift);
