@@ -186,33 +186,64 @@ int readKeyLength() {
  */
 int main(int argc, char **argv) {
 
+	// process optional command line arguments
 	processArguments(argc, argv);
 
 	std::vector<std::string> dictionary;
 	if (!dictionaryPath.empty())
+		// if a dictionary argument was supplied, load from that file
 		dictionary = readDictionary();
 	else
+		// otherwise load the default dictionary embedded in the source
 		dictionary = loadDefaultDictionary();
 
+	// set the cipher text challenge from args or stdin
 	std::string cipherText = readCipher();
+
+	// set the key length from args or stdin
 	int keyLength = readKeyLength();
 
-	int plainTextMatchIndex = -1;
+	int plainTextMatchIndex = 0;
 	std::string explanation;
+
+	// cycle through the dictionary, attempting to match the cipher text against
+	// each plain text candidate
 	for (unsigned int i = 0; i < dictionary.size(); i++) {
-		Decryptor *decryptor = new MultiShiftDecryptor(i, dictionary[i], cipherText, keyLength);
+
+		// first, attempt to use a MultiShiftDecryptor for simple shift (Caesar)
+		// and polyalphabetic ciphers.
+		Decryptor *decryptor = new MultiShiftDecryptor(i + 1,
+				dictionary[i], cipherText, keyLength);
+
+		// add other decryption strategies here on a per candidate basis
+		// alternatively, implement a work queue and each strategy and candidate
+		// to the work queue
+
+		// attempt decryption and test for success
 		if (decryptor->decrypt()) {
+
+			// if successful, retrieve the index of the candidate
 			plainTextMatchIndex = decryptor->getDictionaryIndex();
+
+			// retrieve the explanation with details on the encryption strategy
+			// and derived key
 			explanation = decryptor->getExplanation();
+
+			// clean up
 			delete decryptor;
 			break;
 		}
 	}
 
-	if (plainTextMatchIndex >= 0) {
+	// output the results of the decryption attempt
+	if (plainTextMatchIndex > 0) {
 		std::cout << explanation << std::endl;
 	} else {
 		std::cout << "No match found." << std::endl;
 	}
+
+	// return the index of the plain text from the dictionary if one was found,
+	// otherwise 0
+	return plainTextMatchIndex;
 
 }
