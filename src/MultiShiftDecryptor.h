@@ -41,7 +41,7 @@
  * distributions by frequency only. If the counts match up, we attempt to
  * calculate the shift for that key position by trying all symbols found to have
  * the same frequency count (using the maximum count as a starting point). We
- * test each possibly shift, by applying that shift to the plain text and
+ * test each possible shift, by applying that shift to the plain text and
  * comparing it against the cipher text. This continues until any segment or
  * shift fails or until we succeed.
  */
@@ -72,10 +72,10 @@ public:
 	 * Attempt to match the cipher text to the challenge text using the
 	 * following strategy:
 	 *
-	 *   1. divide the plain and cipher text into T segments using only every
-	 *     Jth symbol from 0 to T-1. Each of these segments from the plain and
-	 *     cipher texts is treated as a separate Message, each with its own
-	 *     SymbolDistribution.
+	 *   1. Divide the plain and cipher text into T segments using only every
+	 *     c*t+j symbol from c from 0 to L/t-1. Each of these segments from
+	 *     the plain and cipher texts is treated as a separate Message, each
+	 *     with its own SymbolDistribution.
 	 *   2. Cycle through the segments, comparing the symbol distributions by
 	 *     frequency only.
 	 *   3. If the counts match up, we attempt to calculate the shift for that
